@@ -18,17 +18,41 @@ import Image from 'next/image';
 
 
 
+// async function fetchProjects() {
+//   const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/project`, {
+//     cache: 'no-store',
+//   });
+
+//   if (!res.ok) {
+//     throw new Error('Network response was not ok');
+//   }
+
+//   return res.json();
+// }
+
+
 async function fetchProjects() {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/project`, {
-    cache: 'no-store',
-  });
+  try {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+    console.log('Fetching from:', `${apiUrl}/api/project`);
+    
+    const res = await fetch(`${apiUrl}/api/project`, {
+      cache: 'no-store',
+    });
 
-  if (!res.ok) {
-    throw new Error('Network response was not ok');
+    if (!res.ok) {
+      console.error('Failed to fetch projects:', res.status, res.statusText);
+      throw new Error('Failed to fetch projects');
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error('Error in fetchProjects:', error);
+    throw error;
   }
-
-  return res.json();
 }
+
+
 
 export default async function Projects() {
   const projects = await fetchProjects();
